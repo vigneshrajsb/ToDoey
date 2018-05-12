@@ -10,7 +10,7 @@ import UIKit
 
 class ToDoListViewController: UITableViewController {
     
-    let array  = ["Return laptop","TAS function","study iOS", "movie?"]
+    var array  = ["Return laptop","TAS function","study iOS", "movie?"]
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -44,7 +44,30 @@ class ToDoListViewController: UITableViewController {
         }
     }
     
-
+    // MARK: Add bar button code
+    
+    @IBAction func addPressed(_ sender: UIBarButtonItem) {
+        var textEntered = UITextField()
+        let alert = UIAlertController(title: "Enter Task", message: "" , preferredStyle: .alert)
+        let action = UIAlertAction(title: "Add", style: .default) { (action) in
+            if textEntered.text != "" {
+            self.array.append(textEntered.text!)
+                self.tableView.reloadData()
+            } else{
+                print("nothing entered") }
+        }
+        
+        alert.addAction(action)
+        alert.addTextField { (textField) in
+             textField.placeholder = "enter here"
+            print(textField.text!)
+            textEntered = textField
+        }
+        present(alert, animated: true)
+        
+        
+    }
+    
 
 
 }
