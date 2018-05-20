@@ -7,12 +7,15 @@
 //
 
 import UIKit
+import CoreData
 
 class ToDoListViewController: UITableViewController {
     
-    var array  = [ListItem]()
+    var array  = [Entity]()
     // var defaults = UserDefaults.standard
-    let dataFilepath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Items.plist")
+   // let dataFilepath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Items.plist")
+    let context = ((UIApplication.shared.delegate) as! AppDelegate).persistentContainer.viewContext
+    
     
 //    var itemObject = ListItem()
 //    var itemObject2 = ListItem()
@@ -24,7 +27,7 @@ class ToDoListViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         //print(defaults.array(forKey: "ToDoListUserDefaultArray" as String)!)
-    
+      //print(" This is the path \(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))")
         
         //guard if the defaults values are nil
         // guard let temp = defaults.array(forKey: "") as? [String] else { return }
@@ -36,7 +39,7 @@ class ToDoListViewController: UITableViewController {
 //        itemsObject3.itemToDo   = "third item"
 //        array.append(itemsObject3)
         
-       fetchData()
+      fetchData()
         
     }
 
@@ -74,6 +77,10 @@ class ToDoListViewController: UITableViewController {
     // MARK: table view delegate methods
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
+        //to delete the record in the table
+       // context.delete(array[indexPath.row])
+        //array.remove(at: indexPath.row)
+        
         array[indexPath.row].itemChecked = !array[indexPath.row].itemChecked
         tableView.deselectRow(at: indexPath, animated: true)
        saveData()
@@ -87,11 +94,13 @@ class ToDoListViewController: UITableViewController {
         let alert = UIAlertController(title: "Enter Task", message: "" , preferredStyle: .alert)
         let action = UIAlertAction(title: "Add", style: .default) { (action) in
             if textEntered.text != "" {
-                let itemAdded = ListItem()
+              //  let itemAdded = ListItem()
+                let itemAdded =  Entity(context: self.context)
                 itemAdded.itemToDo = textEntered.text!
-                self.array.append(itemAdded)
+                itemAdded.itemChecked = false
+                //self.array.append(itemAdded)
                 //self.defaults.set(self.array, forKey: "ToDoListUserDefaultArray")
-                
+            
                 self.saveData()
             } else{
                 print("nothing entered in enter task text box") }
@@ -110,27 +119,37 @@ class ToDoListViewController: UITableViewController {
 
     
     func saveData() {
-        let encoder = PropertyListEncoder()
+        
         do {
-            let data  = try encoder.encode(array)
-            try data.write(to: dataFilepath!)
+            try context.save()
         } catch {
-            print("error during encoding of object \(error)")
+            print("error saving context : \(error)")
         }
-
+        
         self.tableView.reloadData()
     }
     
     func fetchData(){
-        if let data = try? Data(contentsOf: dataFilepath!) {
-            let decoder = PropertyListDecoder()
-            do {
-                array = try decoder.decode([ListItem].self, from: data)
-            } catch {
-                print("error during decoding \(error)")
-            }
+        //fetching core data
+        let request : NSFetchRequest<Entity> = Entity.fetchRequest()
+        do {
+            array  = try context.fetch(request)
+        } catch {
+            print("Error fetching data from context : \(error)")
         }
         
+        
+        
+        //below code was used for the NSCoder method
+//        if let data = try? Data(contentsOf: dataFilepath!) {
+//            let decoder = PropertyListDecoder()
+//            do {
+//                array = try decoder.decode([ListItem].self, from: data)
+//            } catch {
+//                print("error during decoding \(error)")
+//            }
+//        }
+
     }
 
 
