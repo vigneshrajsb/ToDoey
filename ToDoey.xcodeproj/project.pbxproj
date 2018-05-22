@@ -14,6 +14,7 @@
 		50403CD820A6969E0002BF1C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 50403CD620A6969E0002BF1C /* LaunchScreen.storyboard */; };
 		5089443D20A89BC500E69470 /* ListItems.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 5089443B20A89BC500E69470 /* ListItems.xcdatamodeld */; };
 		5093FB3920A7E167002B3C11 /* ListItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5093FB3820A7E167002B3C11 /* ListItem.swift */; };
+		50DD171A20B12CA100A8E801 /* CategoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50DD171920B12CA100A8E801 /* CategoryViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +27,7 @@
 		50403CD920A6969E0002BF1C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5089443C20A89BC500E69470 /* ListItems.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = ListItems.xcdatamodel; sourceTree = "<group>"; };
 		5093FB3820A7E167002B3C11 /* ListItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListItem.swift; sourceTree = "<group>"; };
+		50DD171920B12CA100A8E801 /* CategoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -80,6 +82,7 @@
 		5093FB3A20A7E30E002B3C11 /* Controller */ = {
 			isa = PBXGroup;
 			children = (
+				50DD171920B12CA100A8E801 /* CategoryViewController.swift */,
 				50403CCF20A6969D0002BF1C /* ToDoListViewController.swift */,
 			);
 			path = Controller;
@@ -176,6 +179,7 @@
 				5089443D20A89BC500E69470 /* ListItems.xcdatamodeld in Sources */,
 				50403CD020A6969D0002BF1C /* ToDoListViewController.swift in Sources */,
 				5093FB3920A7E167002B3C11 /* ListItem.swift in Sources */,
+				50DD171A20B12CA100A8E801 /* CategoryViewController.swift in Sources */,
 				50403CCE20A6969D0002BF1C /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

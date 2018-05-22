@@ -12,6 +12,8 @@ import CoreData
 class ToDoListViewController: UITableViewController {
     
     var array  = [Entity]()
+   // var categorySelected = ""
+    var category = Category()
     // var defaults = UserDefaults.standard
    // let dataFilepath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Items.plist")
     let context = ((UIApplication.shared.delegate) as! AppDelegate).persistentContainer.viewContext
@@ -26,6 +28,7 @@ class ToDoListViewController: UITableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        navigationItem.title = category.categoryName
         //print(defaults.array(forKey: "ToDoListUserDefaultArray" as String)!)
       //print(" This is the path \(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))")
         
@@ -39,7 +42,7 @@ class ToDoListViewController: UITableViewController {
 //        itemsObject3.itemToDo   = "third item"
 //        array.append(itemsObject3)
         
-      fetchData()
+      fetchCategoryItems()
         
     }
 
@@ -78,12 +81,13 @@ class ToDoListViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
         //to delete the record in the table
-       // context.delete(array[indexPath.row])
+        // context.delete(array[indexPath.row])
         //array.remove(at: indexPath.row)
         
         array[indexPath.row].itemChecked = !array[indexPath.row].itemChecked
         tableView.deselectRow(at: indexPath, animated: true)
-       saveData()
+        saveData()
+        fetchCategoryItems()
         
     }
     
@@ -98,10 +102,12 @@ class ToDoListViewController: UITableViewController {
                 let itemAdded =  Entity(context: self.context)
                 itemAdded.itemToDo = textEntered.text!
                 itemAdded.itemChecked = false
-                //self.array.append(itemAdded)
-                //self.defaults.set(self.array, forKey: "ToDoListUserDefaultArray")
+                itemAdded.toCategory = self.category
+               // itemAdded.itemCategory = self.categorySelected
+
             
                 self.saveData()
+                self.fetchCategoryItems()
             } else{
                 print("nothing entered in enter task text box") }
         }
@@ -126,19 +132,19 @@ class ToDoListViewController: UITableViewController {
             print("error saving context : \(error)")
         }
         
-        self.tableView.reloadData()
+       // self.tableView.reloadData()
     }
     
-    func fetchData(){
+    func fetchData(with request: NSFetchRequest<Entity> = Entity.fetchRequest()){
         //fetching core data
-        let request : NSFetchRequest<Entity> = Entity.fetchRequest()
+       
         do {
             array  = try context.fetch(request)
         } catch {
             print("Error fetching data from context : \(error)")
         }
         
-        
+        tableView.reloadData()
         
         //below code was used for the NSCoder method
 //        if let data = try? Data(contentsOf: dataFilepath!) {
@@ -151,7 +157,39 @@ class ToDoListViewController: UITableViewController {
 //        }
 
     }
+    
+    func fetchCategoryItems() {
+        let request : NSFetchRequest<Entity> = NSFetchRequest(entityName: "Entity")
+        request.predicate = NSPredicate(format: "toCategory.categoryName MATCHES[cd] %@", category.categoryName!)
+        fetchData(with: request)
+    }
 
 
+}
+
+
+//MARK:  Search bar funcationality
+extension ToDoListViewController : UISearchBarDelegate {
+    
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        // print(searchBar.text!)
+        let searchRequest : NSFetchRequest<Entity> = Entity.fetchRequest()
+        searchRequest.predicate = NSPredicate(format: "itemToDo CONTAINS[cd] %@", searchBar.text!)
+        searchRequest.sortDescriptors = [NSSortDescriptor(key: "itemToDo", ascending: true)]
+        fetchData(with: searchRequest)
+    }
+    
+    //when the search bar text count is 0 then resigning the serachbar fron first responder to remove cursor and hide keyboard
+    //use the main thread to update UI elements
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        if searchBar.text?.count == 0 {
+            fetchData()
+            DispatchQueue.main.async {
+                searchBar.resignFirstResponder()
+            }
+        }
+    }
+    
+    
 }
 
